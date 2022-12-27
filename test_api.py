@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 
 from typing import Optional
-
+import uvicorn
 from pydantic import BaseModel
 
 app = FastAPI()
+
 
 class Disciplina(BaseModel):
     nome: str
@@ -12,20 +13,23 @@ class Disciplina(BaseModel):
     carga_horaria: int
 
 
-
 @app.get("/disciplinas")
 def index(limit=10, sort: Optional[str] = None):
-
     if sort:
         return {'data': f'lista de {limit} disciplinas ordenadas por {sort}'}
     else:
         return {'data': f'lista de {limit} disciplinas'}
 
+
 @app.get('/disciplinas/{id}')
 def show(id: int):
     return {'data': id}
 
+
 @app.post('/disciplinas')
 def create(request: Disciplina):
-   return {'data': f"disciplina {request.nome} criada"}
+    return {'data': f"disciplina {request.nome} criada"}
 
+
+# if __name__ == '__main__':
+#     uvicorn.run(app, host='127.0.0.1', port=8000)
