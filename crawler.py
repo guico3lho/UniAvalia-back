@@ -10,7 +10,13 @@ import re
 
 
 def main():
-    database.Base.metadata.create_all(bind=database.engine)
+    reset_db = True
+    if reset_db:
+        database.drop_db()
+        database.create_db()
+
+    else:
+        database.create_db()
 
     session = database.SessionLocal()
     parse_oferta(508, 2022, 2, session)
@@ -53,9 +59,9 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
 
         type = disciplinas_professores[i].attrs['class'][0]
         if type == 'agrupador':
-            if flag_nova_disciplina_encontrada == 1:
-                session.add(disciplina)
-                session.commit()
+            # if flag_nova_disciplina_encontrada == 1:
+            #     session.add(disciplina)
+            #     session.commit()
 
             flag_nova_disciplina_encontrada = 1
             indice_disciplina_atual += 1
@@ -66,21 +72,36 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
             continue
 
         elif type == 'linhaPar' or type == 'linhaImpar':
-            nome_professor = re.match(r'(\w* )*', disciplina_professor.find(name='td', class_='nome').text).group(0).rstrip()
-
-            existe_professor = session.query(models.Professor).filter(models.Professor.nome == nome_professor).first()
-            if not existe_professor:
+            nome_professor = re.match(r'(\w* )*', disciplina_professor.find(name='td', class_='nome').text).group(
+                0).rstrip()
+            # existe_professor = professor
+            professor = session.query(models.Professor).filter(models.Professor.nome == nome_professor).first()
+            if not professor:
                 professor = models.Professor(nome=nome_professor)
                 session.add(professor)
 
-            disciplina.professores.append(professor)
+            if professor not in disciplina.professores:
+                disciplina.professores.append(professor)
+            session.commit()
 
             print("Professor encontrado")
             continue
         else:
             print("Não é professor nem disciplina")
 
+#
+# SELECT d.nome, p.nome
+# FROM disciplina_professor dp
+# INNER JOIN disciplina d ON d.id = dp.disciplina_id
+# INNER JOIN professor p ON p.id = dp.professor_id
 
+
+
+def get_request_from_oferta():
+    response = requests.request("GET", url)
+    html_soup = BeautifulSoup(response.text.encode('utf8'), 'html.parser')
+    return {"cookies": response.headers["Set-Cookie"].split(' ')[0],
+            "javax": html_soup.select('#javax\.faces\.ViewState')[0]['value']}
     # disciplinas_span = html_soup.find_all('span', class_='tituloDisciplina')
     # for disciplina_parent in disciplinas_span:
     #     codigo_disciplina = disciplina_parent.text
@@ -97,17 +118,13 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
     #     print(response.status_code)
 
 
-def get_request_from_oferta():
-    response = requests.request("GET", url)
-    html_soup = BeautifulSoup(response.text.encode('utf8'), 'html.parser')
-    return {"cookies": response.headers["Set-Cookie"].split(' ')[0],
-            "javax": html_soup.select('#javax\.faces\.ViewState')[0]['value']}
 
 
-def send_sqlalchemy_sqlite(disciplinas_list, s: Session):
-    data = [models.Disciplina(**d) for d in disciplinas_list]
-    s.add_all(data)
-    s.commit()
+
+# def send_sqlalchemy_sqlite(disciplinas_list, s: Session):
+#     data = [models.Disciplina(**d) for d in disciplinas_list]
+#     s.add_all(data)
+#     s.commit()
 
 
 if __name__ == '__main__':
