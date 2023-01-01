@@ -10,7 +10,7 @@ import re
 
 
 def main():
-    reset_db = True
+    reset_db = False
     if reset_db:
         database.drop_db()
         database.create_db()
@@ -90,7 +90,7 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
             print("Não é professor nem disciplina")
 
 #
-# SELECT d.nome, p.nome
+# SELECT d.nome as Disciplina, p.nome as Professor
 # FROM disciplina_professor dp
 # INNER JOIN disciplina d ON d.id = dp.disciplina_id
 # INNER JOIN professor p ON p.id = dp.professor_id

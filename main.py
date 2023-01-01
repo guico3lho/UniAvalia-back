@@ -10,7 +10,6 @@ import database
 
 app = FastAPI()
 
-
 def get_db():
     db = database.SessionLocal()
     try:
@@ -18,39 +17,25 @@ def get_db():
     finally:
         db.close()
 
-# migrate all tables
-
-
-
-
-@app.get('/hello')
-def get_hello():
-    return {'message': 'Hello World'}
-# migrate tables
-# models.Base.metadata.create_all(bind=engine)
-@app.post('/disciplinas')
-def create_disciplina(request: schemas.Disciplina, db: Session = Depends(get_db)):
-    new_disciplina = models.Disciplina \
-        (nome=request.nome, codigo=request.codigo)
-    db.add(new_disciplina)
-    db.commit()
-    db.refresh(new_disciplina)
-    return new_disciplina
-
-# @app.get("/disciplinas/")
-# def get_disciplinas():
-#     return parse_oferta(508, 2022,2)
 @app.get('/disciplinas')
 def get_disciplinas(db: Session = Depends(get_db)):
     disciplinas = db.query(models.Disciplina).all()
     return disciplinas
 
 
+
 @app.get('/disciplinas/{disciplina_id}')
 def get_disciplina(disciplina_id: int, db: Session = Depends(get_db)):
     disciplina = db.query(models.Disciplina).filter(models.Disciplina.id == disciplina_id).first()
-    return disciplina
+    return disciplina, disciplina.professores
 
-# @app.post('/disciplinas')
-# def create(request: models.Disciplina):
-#     return print(os.getcwd())
+@app.get('/professores')
+def get_professores(db: Session = Depends(get_db)):
+    professores = db.query(models.Professor).all()
+    return professores
+
+@app.get('/professores/{professor_id}')
+def get_professor(professor_id: int, db: Session = Depends(get_db)):
+    professor = db.query(models.Professor).filter(models.Professor.id == professor_id).first()
+    return professor, professor.disciplinas
+
