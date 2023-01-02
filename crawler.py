@@ -2,11 +2,16 @@ from bs4 import BeautifulSoup
 import requests
 
 url = "https://sigaa.unb.br/sigaa/public/turmas/listar.jsf"
-import models
-from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-import database
+from app import database, models
 import re
+
+query = """
+CREATE disciplina_professor_details as SELECT d.nome as Disciplina, p.nome as Professor
+FROM disciplina_professor dp
+INNER JOIN disciplina d ON d.id = dp.disciplina_id
+INNER JOIN professor p ON p.id = dp.professor_id
+"""
 
 
 def main():
@@ -19,8 +24,37 @@ def main():
         database.create_db()
 
     session = database.SessionLocal()
-    parse_oferta(508, 2022, 2, session)
-    # send_sqlalchemy_sqlite(disciplinas_list, session)
+    # parse_oferta(508, 2022, 2, session)
+
+    create_disciplina_professor_details(session)
+
+def create_disciplina_professor_details(session: Session):
+    ...
+    # session.query(models.disciplina_professor).join(models.Disciplina).join(models.Professor).with_entities(models.disciplina_professor, models.Disciplina.nome, models.Professor.nome).all()
+    session.query(models.disciplina_professor).join(models.Disciplina, models.Disciplina.id).join(models.Professor, models.Professor.id)
+
+
+# def create_disciplina_professor_details(session):
+#     metadata = MetaData(bind=session.bind)
+#     models.DisciplinaProfessorDetails.__table__.create(bind=database.engine)
+#     dp = Table('disciplina_professor', metadata, autoload=True)
+#     disciplina = Table('disciplina', metadata, autoload=True)
+#     professor = Table('professor', metadata, autoload=True)
+#
+#     mapper(models.DisciplinaProfessorDetails, 'disciplina_professor_details', properties={
+#         'disciplina': [disciplina.c.nome],
+#         'professor': [professor.c.nome]
+#     })
+#
+#
+#     result = session.query(models.DisciplinaProfessorDetails).join(disciplina,
+#                                                             disciplina.c.id == dp.c.disciplina_id).join(
+#         professor, professor.c.id == dp.c.professor_id).all()
+#
+#
+# de
+
+
 
 
 # Para cada matéria, criar objeto do tipo disciplina
@@ -88,12 +122,13 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
             continue
         else:
             print("Não é professor nem disciplina")
+    session.close()
+
+    # create disciplina_professor table with disciplina and professor names
 
 #
-# SELECT d.nome as Disciplina, p.nome as Professor
-# FROM disciplina_professor dp
-# INNER JOIN disciplina d ON d.id = dp.disciplina_id
-# INNER JOIN professor p ON p.id = dp.professor_id
+
+
 
 
 

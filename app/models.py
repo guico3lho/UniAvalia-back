@@ -8,6 +8,7 @@ disciplina_professor = Table('disciplina_professor', Base.metadata,
                              Column('professor_id', Integer, ForeignKey('professor.id')))
 
 
+
 class Disciplina(Base):
     __tablename__ = "disciplina"
 
@@ -24,3 +25,8 @@ class Professor(Base):
     nome = Column(String)
     disciplinas = relationship("Disciplina", secondary=disciplina_professor, back_populates="professores")
 # drop a dataframe row if a column contains another string
+
+class DisciplinaProfessorDetails(Base):
+    __tablename__ = 'disciplina_professor_details'
+    disciplina = Column(String, primary_key=True)
+    professor = Column(String, primary_key=True)
