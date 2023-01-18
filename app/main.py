@@ -2,9 +2,9 @@ from fastapi import FastAPI, Depends
 
 from sqlalchemy.orm import Session
 
-import models
+import app.models as models
 
-import database
+import app.database as database
 
 app = FastAPI()
 

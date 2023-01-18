@@ -8,7 +8,8 @@ url = "https://sigaa.unb.br/sigaa/public/turmas/listar.jsf"
 
 
 def main():
-    reset_db = False
+
+    reset_db = True
     if reset_db:
         database.drop_db()
         database.create_db()
