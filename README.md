@@ -1,7 +1,12 @@
 ﻿# UniAvalia-back
  
- API created using Python language
- Frameworks used: BeautifulSoup, FastAPI and SQLAlchemy
+ API created using Python language.
+ 
+ Frameworks used: 
+ - BeautifulSoup
+ - FastAPI
+ - SQLAlchemy
+ 
  This API returns: 
  - List of professors of CIC departament of University of Brasília
  - List of disciplinas of CIC departament of University of Brasília
