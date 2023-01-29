@@ -57,6 +57,7 @@ def parse_oferta(dep_id, ano, periodo, session: Session):
             indice_disciplina_atual += 1
             print(f'Parsing disciplina {indice_disciplina_atual}/{len_disciplinas}')
             codigo_e_disciplina = disciplina_professor.td.a.span.text.split(' - ')
+
             disciplina = models.Disciplina(codigo=codigo_e_disciplina[0], nome=codigo_e_disciplina[1])
             continue
 
@@ -85,6 +86,7 @@ def get_request_from_oferta():
     html_soup = BeautifulSoup(response.text.encode('utf8'), 'html.parser')
     return {"cookies": response.headers["Set-Cookie"].split(' ')[0],
             "javax": html_soup.select('#javax\.faces\.ViewState')[0]['value']}
+
 
 
 if __name__ == '__main__':

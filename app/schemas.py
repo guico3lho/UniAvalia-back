@@ -9,5 +9,3 @@ class Disciplina(BaseModel):
 
 class Professor(BaseModel):
     nome: str
-
-

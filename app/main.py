@@ -1,12 +1,26 @@
 from fastapi import FastAPI, Depends
 
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
-import app.models as models
+import models as models
 
-import app.database as database
+import database as database
 
 app = FastAPI()
+
+# origins = [
+#     "http://localhost",
+#     "http://localhost:3000",
+#     "https://uniavalia.vercel.app/search"
+# ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = database.SessionLocal()
@@ -26,7 +40,7 @@ def get_disciplina(disciplina_id: int, db: Session = Depends(get_db)):
     return disciplina, disciplina.professores
 
 @app.get('/professores')
-def get_professores(db: Session = Depends(get_db)):
+def get_professores(db: Session = Depends(get_db    )):
     professores = db.query(models.Professor).all()
     return professores
 
