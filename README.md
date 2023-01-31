@@ -13,3 +13,6 @@
  - List of professor and their respective disciplines thought
  
  API link: https://k55eka.deta.dev/docs
+ 
+ Sites que estão utilizando a API:
+ https://uniavalia.vercel.app/
