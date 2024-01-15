@@ -3,9 +3,11 @@ from sqlalchemy.orm import relationship
 
 from database import Base
 
+
 disciplina_professor = Table('disciplina_professor', Base.metadata,
                              Column('disciplina_id', Integer, ForeignKey('disciplina.id')),
                              Column('professor_id', Integer, ForeignKey('professor.id')))
+
 
 
 class Disciplina(Base):
@@ -24,6 +26,12 @@ class Professor(Base):
     nome = Column(String)
     disciplinas = relationship("Disciplina", secondary=disciplina_professor, back_populates="professores")
 
+# class Professor_Disciplina(Base):
+#     __tablename__ = "professores_disciplinas"
+#     id = Column(Integer, primary_key=True, index=True)
+#     professor_id = Column(Integer, ForeignKey('professores.id'))
+#     disciplina_id = Column(Integer, ForeignKey('disciplinas.id'))
+    # disciplinas = relationship("Disciplina", secondary=disciplina_professor, back_populates="professores")
 
 # drop a dataframe row if a column contains another string
 
